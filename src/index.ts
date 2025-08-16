@@ -1,20 +1,57 @@
-// import type { Core } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 export default {
-  /**
-   * An asynchronous register function that runs before
-   * your application is initialized.
-   *
-   * This gives you an opportunity to extend code.
-   */
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register({ strapi }: { strapi: Core.Strapi }) {
+    const extensionService = strapi.service('plugin::graphql.extension');
 
-  /**
-   * An asynchronous bootstrap function that runs before
-   * your application gets started.
-   *
-   * This gives you an opportunity to set up your data model,
-   * run jobs, or perform some special logic.
-   */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+    // ensure it's only used once
+    extensionService.use(() => ({
+      typeDefs: `
+        type TodoStats {
+          total: Int
+          completed: Int
+          notCompleted: Int
+        }
+
+        extend type Query {
+          todoStats: TodoStats
+        }
+      `,
+      resolvers: {
+        Query: {
+          todoStats: {
+            resolve: async () => {
+              const totalTodos = await strapi.db
+                .query('api::todo.todo')
+                .count({ where: { publishedAt: { $notNull: true } } });
+
+              const completedCount = await strapi.db
+                .query('api::todo.todo')
+                .count({
+                  where: { completed: true, publishedAt: { $notNull: true } },
+                });
+
+              const notCompletedCount = await strapi.db
+                .query('api::todo.todo')
+                .count({
+                  where: { completed: false, publishedAt: { $notNull: true } },
+                });
+
+              return {
+                total: totalTodos,
+                completed: completedCount,
+                notCompleted: notCompletedCount,
+              };
+            },
+          },
+        },
+      },
+      resolversConfig: {
+        'Query.todoStats': { auth: false },
+      },
+    }));
+  },
+
+  bootstrap() {},
 };
+
