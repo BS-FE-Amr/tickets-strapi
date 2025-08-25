@@ -21,23 +21,29 @@
     },
     "email": {
       "type": "email",
-      "required": true,
+      "required": false,
       "unique": true
     },
     "username": {
       "type": "string",
-      "required": true,
+      "required": false,
       "unique": true
     },
     "password": {
       "type": "password",
-      "required": true
+      "required": false
     },
     "age": {
       "type": "integer",
       "required": true,
       "min": 18,
       "max": 60
+    },
+    "todos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::todo.todo",
+      "mappedBy": "employee"
     }
   }
 }

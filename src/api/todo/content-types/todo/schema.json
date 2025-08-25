@@ -24,8 +24,14 @@
     },
     "userId": {
       "type": "biginteger",
-      "required": true,
+      "required": false,
       "unique": false
+    },
+    "employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "todos"
     }
   }
 }

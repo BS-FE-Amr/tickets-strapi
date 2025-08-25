@@ -433,9 +433,7 @@ export interface ApiEmployeeEmployee extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    email: Schema.Attribute.Email &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
+    email: Schema.Attribute.Email & Schema.Attribute.Unique;
     firstName: Schema.Attribute.String & Schema.Attribute.Required;
     lastName: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -444,14 +442,13 @@ export interface ApiEmployeeEmployee extends Struct.CollectionTypeSchema {
       'api::employee.employee'
     > &
       Schema.Attribute.Private;
-    password: Schema.Attribute.Password & Schema.Attribute.Required;
+    password: Schema.Attribute.Password;
     publishedAt: Schema.Attribute.DateTime;
+    todos: Schema.Attribute.Relation<'oneToMany', 'api::todo.todo'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    username: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
+    username: Schema.Attribute.String & Schema.Attribute.Unique;
   };
 }
 
@@ -470,6 +467,7 @@ export interface ApiTodoTodo extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    employee: Schema.Attribute.Relation<'manyToOne', 'api::employee.employee'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::todo.todo'> &
       Schema.Attribute.Private;
@@ -483,7 +481,7 @@ export interface ApiTodoTodo extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    userId: Schema.Attribute.BigInteger & Schema.Attribute.Required;
+    userId: Schema.Attribute.BigInteger;
   };
 }
 
